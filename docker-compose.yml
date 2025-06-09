@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  ncu_ipap_php:
+    build: ./php
+    container_name: ncu_ipap_php
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - ncu_ipap_net
+
+  ncu_ipap_db:
+    image: mariadb:11
+    container_name: ncu_ipap_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ncu_ipap_db
+      MYSQL_USER: ncu_ipap_user
+      MYSQL_PASSWORD: ncu_ipap_pass
+    volumes:
+      - ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ncu_ipap_net
+
+  ncu_ipap_nginx:
+    image: nginx:alpine
+    container_name: ncu_ipap_nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - ncu_ipap_php
+    networks:
+      - ncu_ipap_net
+
+networks:
+  ncu_ipap_net:
+    driver: bridge
