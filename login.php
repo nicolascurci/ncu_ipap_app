@@ -1,8 +1,14 @@
 <?php
 session_start();
 
+// Configuración desde variables de entorno
+$db_host = getenv('DB_HOST') ?: 'ncu_ipap_db'; // Valor por defecto
+$db_name = getenv('DB_NAME');
+$db_user = getenv('DB_USER');
+$db_pass = getenv('DB_PASS');
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $conn = new mysqli("ncu_ipap_db", "ncu_ipap_user", "ncu_ipap_pass", "ncu_ipap_db");
+    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
     if ($conn->connect_error) {
         die("Conexión fallida: " . $conn->connect_error);

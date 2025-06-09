@@ -3,6 +3,13 @@ version: '3.8'
 services:
   ncu_ipap_php:
     build: ./php
+    environment:
+      - DB_HOST=ncu_ipap_db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+    env_file:
+      - .env  # Archivo adicional de variables
     container_name: ncu_ipap_php
     volumes:
       - ./:/var/www/html
@@ -11,12 +18,13 @@ services:
 
   ncu_ipap_db:
     image: mariadb:11
-    container_name: ncu_ipap_db
+    
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: ncu_ipap_db
-      MYSQL_USER: ncu_ipap_user
-      MYSQL_PASSWORD: ncu_ipap_pass
+        MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+        MYSQL_DATABASE: ${DB_NAME}
+        MYSQL_USER: ${DB_USER}
+        MYSQL_PASSWORD: ${DB_PASS}
+    container_name: ncu_ipap_db 
     volumes:
       - ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
